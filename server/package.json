@@ -18,6 +18,7 @@
   "homepage": "https://github.com/tmstani23/trivia-challenge#readme",
   "dependencies": {
     "graphql-yoga": "^1.16.2",
+    "mongodb": "^3.1.6",
     "mongoose": "^5.3.2"
   }
 }
