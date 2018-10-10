@@ -6,13 +6,15 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test2', { useNewUrlParser: true });
 
 //Create mongoose models:
+//Models are responsible for creating and reading documents from the underlying MongoDB database.
 const Todo = mongoose.model("Todo", {
   text: String,
   complete: Boolean
 });
 
 //Create graphql schema:
-//exclamation makes string argument required
+//types are used to validate data and create a structure for queries
+//ID! is a graphQL field each new mutation gets a random hash ID on creation
 const typeDefs = `
   type Query {
     hello(name: String): String!
@@ -26,9 +28,11 @@ const typeDefs = `
   type Mutation {
     createTodo(text: String!): Todo
     updateTodo(id: ID!, complete: Boolean!): Boolean
+    removeTodo(id: ID!): Boolean
   }
 `;
 //Setup graphql action resolvers:
+//After types are checked the function resolvers produce the result
 const resolvers = {
   //adding "_," as the first argument is adding an empty parameter to the function
   Query: {
@@ -43,8 +47,14 @@ const resolvers = {
       await todo.save();
       return todo;
     },
-    updateTodo: async (_, {id, complete}) => {
-      await Todo.findOneAndUpdate(id, {complete});
+    updateTodo: async (_, { id, complete }) => {
+      //find using the id and update the complete field in the db with the input complete arg
+      await Todo.findByIdAndUpdate(id, {complete});
+      return true;
+    },
+    removeTodo: async (_, { id }) => {
+      //find using the id and update the complete field in the db with the input complete arg
+      await Todo.findByIdAndRemove(id);
       return true;
     }
   }
