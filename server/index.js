@@ -1,9 +1,10 @@
 //Import server dependencies:
 const { GraphQLServer } = require('graphql-yoga');
 const mongoose = require('mongoose');
+//const cors = require('cors');
 
 //connect to mongo database - test1 is the database name
-mongoose.connect('mongodb://localhost/test2', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:4000/test2', { useNewUrlParser: true });
 
 //Create mongoose models:
 //Models are responsible for creating and reading documents from the underlying MongoDB database.
@@ -61,7 +62,8 @@ const resolvers = {
 }
 //initialize graphql server variable:
 const server = new GraphQLServer({ typeDefs, resolvers });
-
+//Handle CORS requests:
+//server.use(cors());
 //Handle connection errors:
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 //Open the connection and return a callback starting the server.
