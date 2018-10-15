@@ -1,6 +1,0 @@
-Must run MongoDB as a service to run the app.
-Steps:
-type cmd.exe in windows run inputbox
-type cntrl+shit+enter to open the command prompt as administrator
-type net start MongoDB to run the mongodb server.
-type net stop MongoDB to stop the server.

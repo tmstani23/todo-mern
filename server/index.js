@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 //const cors = require('cors');
 
 //connect to mongo database - test1 is the database name
-mongoose.connect('mongodb://localhost:4000/test2', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost/test2', { useNewUrlParser: true });
 
 //Create mongoose models:
 //Models are responsible for creating and reading documents from the underlying MongoDB database.

@@ -1,0 +1,19 @@
+MongoDB:
+Must run MongoDB as a service to run the app.
+Steps:
+type cmd.exe in windows run inputbox
+type cntrl+shit+enter to open the command prompt as administrator
+type net start MongoDB to run the mongodb server.
+type net stop MongoDB to stop the server.
+
+Run GQL server:
+cd into server directory
+type node start index.js
+verify server is running at localhost:4000
+
+Run Front End React Dev server
+cd into client folder
+type npm start in terminal
+verify server is running at localhost:3000
+
+*Servers must be started in correct order for all to link properly*
