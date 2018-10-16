@@ -34,8 +34,31 @@ class App extends Component {
     await this.props.updateTodo({
       variables: {
         id: todo.id,
-        //input opposite of current complete value:
+        //input opposite of current todo's complete value:
         complete: !todo.complete
+      },
+      //update the apollo cache with the new query information:
+      update: store  => {
+        // Read the data from our cache for this query.
+        const data = store.readQuery({ query: TodosQuery });
+        // Add our comment from the mutation to the end.
+            //map through each todo and if current id matches todo id to update return current
+        data.todos = data.todos.map(
+          inputVal => 
+            //if current id matches todo id from the query
+            (inputVal.id === todo.id 
+            ? {
+              //keep all current todo's properties
+              ...todo,
+              //except change complete to its opposite:
+              complete: !todo.complete
+              } 
+              //else return current non-updated todo
+            : inputVal)
+        )
+        // Write our data back to the cache.
+        store.writeQuery({ query: TodosQuery, data });
+
       }
     });
   };
@@ -54,21 +77,27 @@ class App extends Component {
           {/* Paper component is a material ui background */}
           <Paper elevation={1}>
             <List>
+              {/* each todo from the database is mapped to a list item React component */}
               {todos.map(todo => (
                 <ListItem
                   key={todo.id}
                   role={undefined}
                   dense
                   button
+                  //call update todo function when list item is clicked
                   onClick={() => this.updateTodo(todo)}
                 >
                   <Checkbox
+                  // each todo's complete status is 
+                    //set as the checked state in the checkbox component
                     checked={todo.complete}
                     tabIndex={-1}
                     disableRipple
                   />
+                  {/* text from the todo is set to the ListItemText component's primary text */}
                   <ListItemText primary={todo.text} />
                   <ListItemSecondaryAction>
+                    {/* Call remove function when iconbutton component is clicked */}
                     <IconButton onClick={() => this.removeTodo(todo)}>
                       <CloseIcon />
                     </IconButton>
