@@ -10,8 +10,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
+
 const TodosQuery = gql`
-{
+query {
   todos {
     id
     text
@@ -38,27 +39,28 @@ class App extends Component {
         complete: !todo.complete
       },
       //update the apollo cache with the new query information:
-      update: store  => {
+      update: store => {
         // Read the data from our cache for this query.
         const data = store.readQuery({ query: TodosQuery });
         // Add our comment from the mutation to the end.
             //map through each todo and if current id matches todo id to update return current
+        
         data.todos = data.todos.map(
           inputVal => 
             //if current id matches todo id from the query
-            (inputVal.id === todo.id 
+            inputVal.id === todo.id 
             ? {
               //keep all current todo's properties
               ...todo,
               //except change complete to its opposite:
               complete: !todo.complete
-              } 
+              
+              }
               //else return current non-updated todo
-            : inputVal)
+            : inputVal
         )
         // Write our data back to the cache.
-        store.writeQuery({ query: TodosQuery, data });
-
+        store.writeQuery({ query: TodosQuery, data })
       }
     });
   };
@@ -69,10 +71,15 @@ class App extends Component {
   
   render() {
     //Save the mongodb todos and loading status to props
-    const {data: {loading, todos}} = this.props;
-    
-    return loading ? null 
-    : <div style = {{display: "flex"}}>
+    const {
+      data: {loading, todos}
+    } = this.props;
+    if (loading) {
+      return null;
+    }
+
+    return ( 
+      <div style = {{display: "flex"}}>
         <div style = {{margin: "auto", width: 400}}>
           {/* Paper component is a material ui background */}
           <Paper elevation={1}>
@@ -84,8 +91,6 @@ class App extends Component {
                   role={undefined}
                   dense
                   button
-                  //call update todo function when list item is clicked
-                  onClick={() => this.updateTodo(todo)}
                 >
                   <Checkbox
                   // each todo's complete status is 
@@ -93,6 +98,8 @@ class App extends Component {
                     checked={todo.complete}
                     tabIndex={-1}
                     disableRipple
+                    //call update todo function when list item is clicked
+                    onClick={() => this.updateTodo(todo)}
                   />
                   {/* text from the todo is set to the ListItemText component's primary text */}
                   <ListItemText primary={todo.text} />
@@ -102,13 +109,13 @@ class App extends Component {
                       <CloseIcon />
                     </IconButton>
                   </ListItemSecondaryAction>
-              </ListItem>
+                </ListItem>
               ))}
             </List>
           </Paper>
-          
         </div>
     </div>
+    )
   }
 }
 
@@ -116,7 +123,7 @@ class App extends Component {
 
 export default compose (
   graphql(UpdateMutation, {name: "updateTodo"}),
-  graphql(TodosQuery),
+  graphql(TodosQuery)
 )(App);
 
 
