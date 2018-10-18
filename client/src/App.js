@@ -27,10 +27,16 @@ const UpdateMutation = gql`
     updateTodo(id: $id, complete: $complete) 
   }
 `
+const RemoveMutation = gql`
+  mutation($id: ID!) {
+    removeTodo(id: $id) 
+  }
+`
 
 class App extends Component {
 
   updateTodo = async todo => {
+    
     //Update todo from database and frontend ui
     await this.props.updateTodo({
       variables: {
@@ -64,9 +70,27 @@ class App extends Component {
       }
     });
   };
-  removeTodo = todo => {
+  //Remove todo from database
+  removeTodo = async todo => {
     //Remove todo from database and frontend ui
-
+    await this.props.removeTodo({
+      variables: {
+        id: todo.id,
+      },
+      //update the apollo cache with the new query information:
+      update: store => {
+        // Read the data from our cache for this query.
+        const data = store.readQuery({ query: TodosQuery });
+            //map through each todo and if current id matches todo id to update return current
+        data.todos = data.todos.filter(
+          inputVal => 
+            //filter out todo if current id doesn't match todo id from the query
+            inputVal.id !== todo.id 
+        )
+        // Write our data back to the cache.
+        store.writeQuery({ query: TodosQuery, data })
+      }
+    });
   };
   
   render() {
@@ -81,7 +105,7 @@ class App extends Component {
     return ( 
       <div style = {{display: "flex"}}>
         <div style = {{margin: "auto", width: 400}}>
-          {/* Paper component is a material ui background */}
+            {/* Paper component is a material ui background */}
           <Paper elevation={1}>
             <List>
               {/* each todo from the database is mapped to a list item React component */}
@@ -101,6 +125,7 @@ class App extends Component {
                     //call update todo function when list item is clicked
                     onClick={() => this.updateTodo(todo)}
                   />
+                
                   {/* text from the todo is set to the ListItemText component's primary text */}
                   <ListItemText primary={todo.text} />
                   <ListItemSecondaryAction>
@@ -111,6 +136,7 @@ class App extends Component {
                   </ListItemSecondaryAction>
                 </ListItem>
               ))}
+              
             </List>
           </Paper>
         </div>
@@ -119,9 +145,8 @@ class App extends Component {
   }
 }
 
-
-
 export default compose (
+  graphql(RemoveMutation, {name: "removeTodo"}),
   graphql(UpdateMutation, {name: "updateTodo"}),
   graphql(TodosQuery)
 )(App);
