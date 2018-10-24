@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import gql from "graphql-tag";
 import { graphql, compose } from 'react-apollo';
+
 import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -10,7 +11,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Form from './form';
-
 
 
 const TodosQuery = gql`
@@ -45,16 +45,13 @@ mutation($text: String!) {
 `
 
 
-
 class App extends Component {
-
-
-
+  
   updateTodo = async todo => {
     
     //Update todo from database and frontend ui
-    return await this.props.updateTodo({
-      variables: {
+    await this.props.updateTodo({
+        variables: {
         id: todo.id,
         //input opposite of current todo's complete value:
         complete: !todo.complete
@@ -63,7 +60,7 @@ class App extends Component {
       update: store => {
         // Read the data from our cache for this query.
         const data = store.readQuery({ query: TodosQuery });
-        console.log(store);
+        //console.log(store);
         // Add our comment from the mutation to the end.
             //map through each todo and if current id matches todo id to update return current
         
@@ -81,11 +78,14 @@ class App extends Component {
               //else return current non-updated todo
             : inputVal
         )
+        
         // Write our data back to the cache.
         store.writeQuery({ query: TodosQuery, data })
+        //console.log(store);
       }
     });
   }
+
   //Remove todo from database
   removeTodo = async todo => {
     //Remove todo from database and frontend ui
@@ -124,7 +124,7 @@ class App extends Component {
             //map through each todo and if current id matches todo id to update return current
         data.todos = data.todos.unshift(createTodo)
         // Write our data back to the cache.
-        console.log("wtfmate")
+        
         store.writeQuery({ query: TodosQuery, data })
       }
     });
@@ -146,8 +146,9 @@ class App extends Component {
           <Paper elevation={1}>
             <Form submit={this.createTodo}/>
               <List>
+                
                 {/* each todo from the database is mapped to a list item React component */}
-                {todos.map(todo => (
+                {todos.map(todo => 
                   <ListItem
                     key={todo.id}
                     role={undefined}
@@ -160,11 +161,9 @@ class App extends Component {
                     // each todo's complete status is 
                       //set as the checked state in the checkbox component
                       checked={todo.complete}
-                      tabIndex={-1}
+                      //tabIndex={-1}
                       disableRipple
-                      
                     />
-                  
                     {/* text from the todo is set to the ListItemText component's primary text */}
                     <ListItemText primary={todo.text} />
                     <ListItemSecondaryAction>
@@ -173,18 +172,18 @@ class App extends Component {
                         <CloseIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-                
+                  </ListItem> 
+                )}
               </List>
           </Paper>
+          
         </div>
     </div>
     )
   }
 }
 
-export default compose (
+export default compose(
   graphql(CreateTodoMutation, {name: "createTodo"}),
   graphql(RemoveMutation, {name: "removeTodo"}),
   graphql(UpdateMutation, {name: "updateTodo"}),
