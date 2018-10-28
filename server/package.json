@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/tmstani23/trivia-challenge#readme",
   "dependencies": {
+    "apollo-link": "^1.2.3",
     "graphql-yoga": "^1.16.2",
+    "http-link": "^0.3.0",
     "mongodb": "^3.1.6",
     "mongoose": "^5.3.2"
   }

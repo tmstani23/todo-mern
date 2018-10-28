@@ -82,6 +82,7 @@ class App extends Component {
         // Write our data back to the cache.
         store.writeQuery({ query: TodosQuery, data })
         //console.log(store);
+        this.toggleChecked(data.todos);
       }
     });
   }
@@ -105,7 +106,9 @@ class App extends Component {
         )
         // Write our data back to the cache.
         store.writeQuery({ query: TodosQuery, data })
-      }
+        
+      },
+      
     });
   };
   
@@ -129,6 +132,15 @@ class App extends Component {
       }
     });
   };
+  
+
+  toggleChecked = dataProps => {
+    //update checkbox in props
+    //console.log(dataProps);
+    return dataProps.checked = !dataProps.checked;
+  }
+
+
 
   render() {
     //Save the mongodb todos and loading status to props
@@ -168,6 +180,7 @@ class App extends Component {
                     <ListItemText primary={todo.text} />
                     <ListItemSecondaryAction>
                       {/* Call remove function when iconbutton component is clicked */}
+                      {/* <IconButton onClick={() => this.removeTodo(todo)}> */}
                       <IconButton onClick={() => this.removeTodo(todo)}>
                         <CloseIcon />
                       </IconButton>
